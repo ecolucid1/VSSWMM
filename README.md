@@ -45,19 +45,19 @@ Follow these steps to get the script running.
 ### 3. Configure the Script
 
 * Open the `swmm_runoff_py.py` script in a text editor.
-* **Set your API Key:** On line 228, replace `"YOUR_API_KEY"` with the key you copied from OpenWeatherMap.
+* **Set your API Key:**  replace `"YOUR_API_KEY"` with the key you copied from OpenWeatherMap.
 
     ```python
     API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     ```
 
-* **Set Your Location:** On lines 231-232, change the `LATITUDE` and `LONGITUDE` to your area of interest.
+* **Set Your Location:** change the `LATITUDE` and `LONGITUDE` to your area of interest.
 
     ```python
     LATITUDE = 34.0522    # e.g., Los Angeles
     LONGITUDE = -118.2437
     ```
-* **(Optional) Configure the Watershed:** On lines 238-249, you can adjust the `watershed_params` dictionary to match the characteristics of your catchment. The default values represent a typical 20-acre, medium-density residential area.
+* **(Optional) Configure the Watershed:** you can adjust the `watershed_params` dictionary to match the characteristics of your catchment. The default values represent a typical 20-acre, medium-density residential area.
 
 ### 4. Run the Script
 
