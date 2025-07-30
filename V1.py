@@ -370,7 +370,7 @@ def get_weather_data(api_key: str, lat: float, lon: float) -> float:
     Fetches real-time precipitation data from OpenWeatherMap API.
     Returns rainfall in inches per hour.
     """
-    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=daily,minutely,alerts&units=imperial&appid={api_key}"
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}"
     try:
         response = requests.get(url)
         response.raise_for_status()
