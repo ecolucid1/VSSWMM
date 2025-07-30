@@ -20,7 +20,7 @@ The script faithfully implements three key SWMM 5 methods:
 
 ## Features
 
-* **Real-Time Data:** Fetches live, hourly precipitation data from the OpenWeatherMap "One Call" API.
+* **Real-Time Data:** Fetches live, hourly precipitation data from the OpenWeatherMap "Current Weather Data" API.
 * **SWMM 5 Calculations:** Utilizes the core hydrology algorithms from the EPA SWMM 5 engine.
 * **Configurable Catchment:** Easily configure the physical characteristics of your watershed (area, slope, imperviousness, etc.) within the script.
 * **Self-Contained:** All logic is contained in a single Python file with a minimal dependency (`requests`).
@@ -367,28 +367,31 @@ class Subcatchment:
 # --- Weather API Function ---
 def get_weather_data(api_key: str, lat: float, lon: float) -> float:
     """
-    Fetches real-time precipitation data from OpenWeatherMap API.
+    Fetches real-time precipitation from OpenWeatherMap's Current Weather API.
     Returns rainfall in inches per hour.
     """
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}"
+    # Use the /weather endpoint with metric units for consistent conversion
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}"
     try:
         response = requests.get(url)
-        response.raise_for_status()
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
         data = response.json()
         
-        # 'current' object has rain.1h (in mm). Convert mm/hr to in/hr.
-        current_precip_mm_hr = 0.0
-        if 'current' in data and 'rain' in data['current'] and '1h' in data['current']['rain']:
-             current_precip_mm_hr = data['current']['rain']['1h']
-        
-        # If no current rain, check if there's any in the next hour's forecast
-        elif 'hourly' in data and len(data['hourly']) > 0 and 'rain' in data['hourly'][0]:
-             current_precip_mm_hr = data['hourly'][0]['rain']['1h']
+        # Default precipitation is 0.0
+        precip_mm_hr = 0.0
 
-        return current_precip_mm_hr / 25.4
+        # The /weather endpoint provides rain data in `data['rain']['1h']` (in mm)
+        if 'rain' in data and '1h' in data['rain']:
+             precip_mm_hr = data['rain'].get('1h', 0.0)
+        
+        # Convert precipitation from mm/hr to inches/hr
+        return precip_mm_hr / 25.4
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching weather data: {e}")
+        return 0.0
+    except KeyError as e:
+        print(f"Error parsing weather data. Key not found: {e}")
         return 0.0
 
 # --- Main Simulation ---
@@ -397,9 +400,9 @@ if __name__ == "__main__":
     # To get a free API key, sign up at https://openweathermap.org/
     API_KEY = "YOUR_API_KEY"  # <-- IMPORTANT: REPLACE WITH YOUR KEY
     
-    # Location (e.g., New York City)
-    LATITUDE = 40.7128
-    LONGITUDE = -74.0060
+    # Location (e.g., Brookline, MA)
+    LATITUDE = 42.3318
+    LONGITUDE = -71.1217
 
     # Simulation time step in seconds
     TIME_STEP_SEC = 60
