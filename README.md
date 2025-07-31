@@ -19,11 +19,9 @@ The project faithfully implements three key SWMM 5 methods:
 
 ---
 
-## Web Application Interface (`index.html`)
+## Web Application Interface (`VSSWMM_v2.html`)
 
 The interactive web application provides a visual and intuitive way to run simulations without any setup.
-
-![Web App Interface](https://i.imgur.com/3sZ2Y4h.png)
 
 ### Web App Features
 
